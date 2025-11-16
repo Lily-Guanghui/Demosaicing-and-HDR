@@ -26,9 +26,7 @@ def interpolate(X, mask):
     return convolve2d(mask * X, K, mode='same', boundary='symm') / convolve2d(mask, K, mode='same', boundary='symm')
 
 
-def demosaic(raw):
-    X = raw.raw_image_visible
-    pattern = raw.raw_pattern
+def demosaic(X, pattern):
     M_R, M_G, M_B = mask_raw(X, pattern)
     R = interpolate(X, M_R)
     G = interpolate(X, M_G)
