@@ -3,7 +3,6 @@ from scipy.signal import convolve2d
 
 
 def mask_raw(bayer, pattern):
-   H, W = bayer.shape
    R = np.zeros_like(bayer)
    G = np.zeros_like(bayer)
    B = np.zeros_like(bayer)
