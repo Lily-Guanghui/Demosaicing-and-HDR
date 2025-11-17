@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.signal import convolve2d
 
-# 这一步相当于创建了三张布，在对应颜色的布上将颜色标为1，否则为0，这里要传入原始拜耳数据和拜耳模式
+# creates three masks; pixels of the corresponding color are marked as 1, others as 0.
+# Input should be the raw Bayer data and the Bayer pattern.
 def mask_raw(bayer, pattern):
    R = np.zeros_like(bayer)
    G = np.zeros_like(bayer)
@@ -19,19 +20,19 @@ def mask_raw(bayer, pattern):
 
    return R, G, B
 
-# 这一步是对每个颜色通道进行插值，使用卷积核对缺失的像素进行估计，这里使用的是简单的均值滤波，相当于把mask的结果要乘原RAW的值，并且把非这块布的颜色变为0
-# 这里的大除法是在平均卷积后的结果（也就是卷积的值除以3*3范围内有效参与卷积的mask数）
-# 对称填充boundary = 'symm'，
+# interpolates each color channel using a convolution kernel.performs simple mean filtering: mask * RAW keeps only pixels of this color,&and pixels on other masks become 0.
+# division normalizes the convolution result by the number of valid mask pixels， within the 3×3 neighborhood.
+# Symmetric padding: boundary='symm'
 def interpolate(X, mask):
     K = np.ones((3, 3))
     return convolve2d(mask * X, K, mode='same', boundary='symm') / convolve2d(mask, K, mode='same', boundary='symm')
 
-# 最终的去马赛克函数
+# Final demosaicing function
 def demosaic(X, pattern):
     M_R, M_G, M_B = mask_raw(X, pattern)
     R = interpolate(X, M_R)
     G = interpolate(X, M_G)
     B = interpolate(X, M_B)
 
-# 将三个通道堆叠在一起，形成最终的RGB图像
+# Stack the 3 color channels to form the final RGB image
     return np.stack([R, G, B], axis=-1)

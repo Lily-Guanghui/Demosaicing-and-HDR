@@ -1,11 +1,12 @@
 def get_hdr_raw(files, ):
-    # 用第一张作为初始图像
+# Use the first image as the initial reference
     h = files[0]
 
     for idx in range(1, len(files)):
-        i = files[idx] # 当前处理的较亮图像
+        i = files[idx] 
 
-        t = 0.8 * h.max() # h.max() 获取当前HDR图像的最大值，乘以0.8作为阈值
+        t = 0.8 * h.max() 
+        # h.max() gives the max value of the current HDR image; multiply by 0.8 as the threshold
         mask = h > t
         h[mask] = (i * 2 ** idx)[mask]
 

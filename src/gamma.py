@@ -2,9 +2,12 @@
 
 
 # def gamma_correction(data, gamma=0.3):
-#     # a = 最暗的0.01%像素值
-#     # b = 最亮的0.01%像素值
-#     # 将亮度范围映射到0-1之间，低于0的设为0，高于1的设为1
+#   
+#    #a = the darkest 0.01% pixel value
+#    #b = the brightest 0.01% pixel value
+#    #Map the intensity range to 0–1; clamp values below 0 to 0 and above 1 to 1
+
+
 #     a = np.percentile(data, 0.01)
 #     b = np.percentile(data, 99.99)
 #     data = (data - a) / (b - a)
@@ -20,19 +23,19 @@
 import numpy as np
 
 def gamma_correction(data, gamma=0.3, method='power'):
-    # a = 最暗的0.01%像素值
-    # b = 最亮的0.01%像素值
-    # 将亮度范围映射到0-1之间，低于0的设为0，高于1的设为1
+#   a = the darkest 0.01% pixel value
+#   b = the brightest 0.01% pixel value
+#   Map the intensity range to 0–1; clamp values below 0 to 0 and above 1 to 1
     a = np.percentile(data, 0.01)
     b = np.percentile(data, 99.99)
     data = (data - a) / (b - a)
     data[data < 0] = 0 
     data[data > 1] = 1
     
-    # gamma correction 或其他映射
+    # gamma correction or other tone mapping
     if method == 'power':
         data = data ** gamma
-    # 暗部拉亮，同时压缩亮部
+    # Brighten shadows while compressing highlights
     elif method == 'log':
         data = np.log1p(9 * data) / np.log(10)
     else:
